@@ -1,0 +1,48 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os:
+        - ubuntu-18.04
+        - ubuntu-22.04
+        rust:
+        - stable
+        - nightly
+        ruby:
+        - 2.7.7
+        - head
+    runs-on: ${{ matrix.os }}
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.rust }}
+        override: true
+
+    - name: Install Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+
+    - name: Update Rubygems
+      run: gem update --system
+
+    - name: Build
+      run: bundle install
+
+    - name: Test
+      run: bundle exec rake

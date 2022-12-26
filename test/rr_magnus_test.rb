@@ -13,5 +13,7 @@ describe RrMagnusPoint do
     _{ RrMagnusPoint.new('0', '1') }.must_raise TypeError
     _{ RrMagnusPoint.new(nil, nil) }.must_raise TypeError
     _{ RrMagnusPoint.new(-Float::INFINITY, Float::INFINITY) }.must_raise FloatDomainError
+    _{ RrMagnusPoint.new(1) }.must_raise ArgumentError
+    _{ RrMagnusPoint.new }.must_raise ArgumentError
   end
 end
